@@ -32,6 +32,6 @@ before_install:
     - sudo mkdir -p /usr/local/share/tessdata/
     - sudo rsync -a tessdata-3.04.00/ /usr/local/share/tessdata
 install:
-    - pip install Cython
+    - pip install --install-option="--no-cython-compile" https://github.com/cython/cython/archive/master.zip
     - pip install Pillow
 script: python setup.py test
