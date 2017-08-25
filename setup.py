@@ -96,9 +96,9 @@ def get_tesseract_version():
     try:
         p = subprocess.Popen(['tesseract', '-v'], stderr=subprocess.PIPE, stdout=subprocess.PIPE)
         stdout_version, version = p.communicate()
-        if version == '':
-            version = stdout_version
         version = _read_string(version).strip()
+        if version == '':
+            version = _read_string(stdout_version).strip()
         version_match = re.search(r'^tesseract ((?:\d+\.)+\d+).*', version, re.M)
         if version_match:
             version = version_match.group(1)
@@ -129,7 +129,7 @@ def get_build_args():
 
     if build_args['cython_compile_time_env']['TESSERACT_VERSION'] >= 0x040000:
         _LOGGER.debug('tesseract >= 4.00 requires c++11 compiler support')
-        build_args['extra_compile_args'] = ['-std=c++11']
+        build_args['extra_compile_args'] = ['-std=c++11', '-DUSE_STD_NAMESPACE']
 
     _LOGGER.debug('build parameters: {}'.format(build_args))
     return build_args
