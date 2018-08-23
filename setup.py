@@ -49,7 +49,12 @@ else:
 
 def version_to_int(version):
     version = re.search(r'((?:\d+\.)+\d+)', version).group()
-    return int(''.join(version.split('.')), 16)
+    # Split the groups on ".", take only the first one, and print each group with leading 0 if needed
+    # To be safe, also handle cases where an extra group is added to the version string, or if one or two groups
+    # are dropped.
+    version_groups = (version.split('.') + [0, 0])[:3]
+    version_str = "{:02}{:02}{:02}".format(*map(int, version_groups))
+    return int(version_str, 16)
 
 
 def package_config():
@@ -127,8 +132,8 @@ def get_build_args():
             _LOGGER.warn('pkg-config failed to find tesseract/lept libraries: {}'.format(e))
         build_args = get_tesseract_version()
 
-    if build_args['cython_compile_time_env']['TESSERACT_VERSION'] >= 0x040000:
-        _LOGGER.debug('tesseract >= 4.00 requires c++11 compiler support')
+    if build_args['cython_compile_time_env']['TESSERACT_VERSION'] >= 0x030502:
+        _LOGGER.debug('tesseract >= 03.05.02 requires c++11 compiler support')
         build_args['extra_compile_args'] = ['-std=c++11', '-DUSE_STD_NAMESPACE']
 
     _LOGGER.debug('build parameters: {}'.format(build_args))
@@ -154,6 +159,7 @@ setup(name='tesserocr',
       version=find_version('tesserocr.pyx'),
       description='A simple, Pillow-friendly, Python wrapper around tesseract-ocr API using Cython',
       long_description=read('README.rst'),
+      long_description_content_type='text/x-rst',
       url='https://github.com/sirfz/tesserocr',
       author='Fayez Zouheiry',
       author_email='iamfayez@gmail.com',

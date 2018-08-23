@@ -18,7 +18,7 @@ tesseract 3.04.00
  ['eng', 'osd', 'equ'])
 """
 
-__version__ = '2.2.2'
+__version__ = '2.3.0'
 
 import os
 from io import BytesIO
@@ -48,8 +48,14 @@ setMsgSeverity(L_SEVERITY_NONE)  # suppress leptonica error messages
 cdef TessBaseAPI _api = TessBaseAPI()
 _api.SetVariable('debug_file', '/dev/null')  # suppress tesseract debug messages
 _api.Init(NULL, NULL)
-cdef _DEFAULT_PATH = abspath(join(_api.GetDatapath(), os.pardir)) + os.sep
-cdef _DEFAULT_LANG = _api.GetInitLanguagesAsString()
+IF TESSERACT_VERSION >= 0x040000:
+    cdef _DEFAULT_PATH = _api.GetDatapath()  # "tessdata/" is not appended by tesseract since commit dba13db
+ELSE:
+    cdef _DEFAULT_PATH = abspath(join(_api.GetDatapath(), os.pardir)) + os.sep
+_init_lang = _api.GetInitLanguagesAsString()
+if _init_lang == '':
+    _init_lang = 'eng'
+cdef _DEFAULT_LANG = _init_lang
 _api.End()
 TessBaseAPI.ClearPersistentCache()
 
