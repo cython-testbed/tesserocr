@@ -25,7 +25,7 @@ before_install:
     - cd $TESSERACT_INSTALL/share/tessdata && rm -f osd.traineddata && wget https://github.com/tesseract-ocr/tessdata/raw/master/osd.traineddata && cd -
     - cd $TESSERACT_INSTALL/share/tessdata && rm -f eng.traineddata && wget https://github.com/tesseract-ocr/tessdata/raw/master/eng.traineddata && cd -
 install:
-    - pip install --install-option="--no-cython-compile" https://github.com/cython/cython/archive/04d918f684404375390657d12ecb53346d66c93d.zip
+    - pip install --install-option="--no-cython-compile" https://github.com/cython/cython/archive/8f586aa97bcbb8c10d7ee34ff858d69329b0c4af.zip
     - pip install Pillow
 script:
     - python setup.py test
